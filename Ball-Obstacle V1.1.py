@@ -14,17 +14,17 @@ class Ball:
         # for collisions ball-ball
         self.mass = float(mass) 
 
-    @property
+    #@property
     def position(self):
          # vectorial access to position
         return np.array([self.x, self.y])
     
-    @property
+    #@property
     def velocity(self):
        # vectorial access to velocity
         return np.array([self.vx, self.vy])
     
-    @property
+    #@property
     def kinetic_energy(self):
         # kinetic energy
         return 0.5 * self.mass * (self.vx**2 + self.vy**2)
