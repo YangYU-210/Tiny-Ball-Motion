@@ -4,6 +4,7 @@ import numpy as np
 import sys 
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from matplotlib.figure import Figure
+from matplotlib.patches import Circle
 
 
 
@@ -389,9 +390,46 @@ class ParticleGui(QWidget):
             
         # plot trajectories
         for i in range(traj.shape[0]):
-            ax.plot(traj[i, :, 0], traj[i, :, 1], lw=1, alpha=0.8)
-            ax.scatter([traj[i, 0, 0]], [traj[i, 0, 1]], zorder=3)       # start
-            ax.scatter([traj[i, -1, 0]], [traj[i, -1, 1]], zorder=3)     # end
+            # Plot trajectory line with a label for the legend
+            (line,) = ax.plot(
+                traj[i, :, 0],
+                traj[i, :, 1],
+                lw=1,
+                alpha=0.8,
+                label=f"Ball {i+1}",
+            )
+            color = line.get_color()
+
+            # Draw "balls" with TRUE physical radius r (data units) using Circle patches
+            start_circle = Circle(
+                (traj[i, 0, 0], traj[i, 0, 1]),
+                radius=r,
+                edgecolor=color,
+                facecolor=color,
+                alpha=1,
+                zorder=3,
+            )
+            end_circle = Circle(
+                (traj[i, -1, 0], traj[i, -1, 1]),
+                radius=r,
+                edgecolor=color,
+                facecolor=color,
+                alpha=1,
+                zorder=3,
+            )
+            ax.add_patch(start_circle)
+            ax.add_patch(end_circle)
+
+            # Add a small text notation along the trajectory
+            mid_idx = traj.shape[1] // 2
+            ax.annotate(
+                f"{i+1}",
+                (traj[i, mid_idx, 0], traj[i, mid_idx, 1]),
+                textcoords="offset points",
+                xytext=(5, 5),
+                fontsize=8,
+                color=color,
+            )
 
         ax.set_aspect("equal", adjustable="box")
         ax.set_xlim(-H, H)
